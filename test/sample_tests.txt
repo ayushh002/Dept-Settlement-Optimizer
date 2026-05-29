@@ -1,0 +1,49 @@
+# Format: Each test case is:
+# input transactions (debtor,creditor,amount) separated by '|'
+# followed by '=>' and expected output (or number of transfers)
+# The code can be used for manual verification.
+
+Test 1 (basic)
+Input: Tom,Jerry,1000 | Jerry,Tom,500
+Expected: 1 transfer (Jerry->Tom 500)
+
+Test 2 (simple chain)
+Input: A,B,100 | B,C,100
+Expected: 1 transfer (A->C,100) because net: A:-100, C:+100
+
+Test 3 (circular net zero)
+Input: P,Q,50 | Q,R,50 | R,P,50
+Expected: 0 transfers
+
+Test 4 (multiple creditors/debtors)
+Input: U,V,200 | U,W,300 | X,V,100 | Y,W,50
+Net: U:-500, V:+300, W:+350, X:-100, Y:-50
+Expected optimal transfers count = 2 (e.g., U->V 300, U->W 200, X->W 100, Y->W 50 -> but grouping may reduce to 2? Actually optimal is at least 3? See reasoning: non-zero count =5, ideal minimal = 5 - maxZeroSumSubsets; may produce 3. But code output will vary.)
+
+Test 5 (large amounts)
+Input: Alice,Bob,1000000000 | Bob,Charlie,500000000 | Charlie,Alice,500000000
+Expected: 0 transfers (net zero all)
+
+Test 6 (zero balance already)
+Input: Dave,Eve,0 | Eve,Dave,0
+Expected: 0 transfers
+
+Test 7 (single person no transaction)
+Input: (empty) -> [] (no output)
+
+Test 8 (many participants)
+Input: A,B,10 | B,C,20 | C,D,30 | D,E,40 | E,F,50 | F,A,150
+Expected: All net zero -> 0 transfers
+
+Test 9 (unbalanced simple)
+Input: John,Mary,75 | Mary,Steve,25 | Steve,John,50
+Expected: 0 transfers? Net: John:+25, Mary:-50, Steve:+25? Actually recalc:
+John: -75 +50 = -25; Mary: +75 -25 = +50; Steve: +25 -50 = -25? Wait recalc carefully:
+Transaction1: John pays Mary => John -75, Mary +75
+Transaction2: Mary pays Steve => Mary -25, Steve +25
+Transaction3: Steve pays John => Steve -50, John +50
+Final: John:-75+50=-25; Mary:+75-25=+50; Steve:+25-50=-25. Sum -25+50-25=0. Non-zero all three. Minimal transfers: 2 (e.g., Mary->John 25, Mary->Steve 25). Count = 2.
+
+Test 10 (mixed signs optimal)
+Input: X,Y,30 | Y,Z,20 | Z,X,10 | X,W,40 | W,Y,25
+Net: X: -30+10-40 = -60; Y:+30-20+25=+35; Z:+20-10=+10; W:+40-25=+15. Non-zero:4; optimal transfers maybe 3 (e.g., X->Y 35, X->Z 10, X->W 15) -> 3 transfers.
