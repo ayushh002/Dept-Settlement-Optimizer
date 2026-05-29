@@ -84,3 +84,8 @@ Output: `[["Spike","Tom",500]]`
 - Efficiency trade‑off: Exact solution is only feasible for small M; for larger M (real‑world with many people), we accept a near‑optimal but much faster approximation. This balances correctness with scalability, following competitive programming best practices.
 
 - Why this solution is efficient: Pre‑computation is linear. The fallback is linearithmic. The exact branch is only triggered for small M where factorial complexity is acceptable.
+
+## Code execution
+- cd src
+- g++ -std=c++17 main.cpp DebtSettlement.cpp -o debt_optimizer.exe
+- .\debt_optimizer.exe
